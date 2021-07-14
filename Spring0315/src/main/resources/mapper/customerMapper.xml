@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swdo.test.dao.CustomerMapper">
+
+<select id="customerLogin" parameterType="customer" resultType="customer">
+
+select
+	customer_id
+	,customer_pw
+	,customer_nm
+from
+	customer_tb
+where
+	customer_id = #{customer_id}
+</select>
+
+</mapper>
