@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swdo.test.dao.PortfolioMapper">
+
+<insert id="portfolioInsert" parameterType="portfolio" >
+
+insert into 
+		portfolio_tb(
+			portfolio_no
+			,applier_id
+			,portfolio_title
+			,portfolio_content
+			,portfolio_type
+			,portfolio_st
+			,portfolio_et
+			,portfolio_gb
+		)values(
+			portfolio_seq.nextval
+			,#{applier_id}
+			,#{portfolio_title}
+			,#{portfolio_content}
+			,#{portfolio_type}
+			,#{portfolio_st}
+			,#{portfolio_et}
+			,#{portfolio_gb}
+		)
+
+</insert>
+
+<!-- 개인 포트폴리오 전체 목록 -->
+<select id="portfolioSelectAll" parameterType="String" resultType="portfolio">
+
+select
+		portfolio_no
+		,applier_id
+		,portfolio_title
+		,portfolio_content
+		,portfolio_type
+		,portfolio_st
+		,portfolio_et
+		,portfolio_gb
+		,to_char(portfolio_gb_date,'yy-mm-dd') as portfolio_gb_date
+from
+	portfolio_tb
+where
+	applier_id = #{applier_id}
+order by
+	portfolio_no desc
+	
+
+ </select>
+ 
+ <!--  포트폴리오 전체 목록 -->
+<select id="portfolioAll"  resultType="hashmap">
+
+select
+		p.portfolio_no as PORTFOLIO_NO
+		,p.applier_id as APPLIER_ID
+		,a.applier_nm as APPLIER_NM
+		,p.portfolio_title as PORTFOLIO_TITLE
+		,p.portfolio_content asPORTfOLIO_CONTENT
+		,p.portfolio_type as PORTFOLIO_TYPE
+		,p.portfolio_st as PORTFOLIO_ST
+		,p.portfolio_et as PORTFOLIO_ET
+		,p.portfolio_gb as PORTFOLIO_GB
+		,to_char(p.portfolio_gb_date,'yy-mm-dd') as PORTFOLIO_GB_DATE
+from
+	portfolio_tb p , applier_tb a
+where
+	portfolio_gb = 1
+	and
+	p.applier_id = a.applier_id
+order by
+	portfolio_no desc
+	
+
+ </select>
+
+<update id="gbUpdate" parameterType="portfolio">
+
+update
+	portfolio_tb
+	
+set	
+		<if test="portfolio_gb == 0">
+			portfolio_gb = 1,
+			portfolio_gb_date = to_char(sysdate,'yy-mm-dd')
+		</if>
+		<if test="portfolio_gb == 1">
+			portfolio_gb = 0
+		</if>
+where
+	portfolio_no = #{portfolio_no}
+
+</update> 
+
+
+<select id="portfolioSelectOne" parameterType="int" resultType="portfolio">
+
+select
+		portfolio_no
+		,applier_id
+		,portfolio_title
+		,portfolio_content
+		,portfolio_type
+		,to_char(portfolio_st,'yy-mm-dd') as portfolio_st
+		,to_char(portfolio_et,'yy-mm-dd') as portfolio_et
+		,portfolio_gb
+		,to_char(portfolio_gb_date,'yy-mm-dd') as portfolio_gb_date
+from
+	portfolio_tb
+where
+	portfolio_no = #{portfolio_no}
+</select>
+
+<delete id="portfolioDelete" parameterType="int">
+
+	delete from 
+		portfolio_tb 
+	where
+		 portfolio_no = #{portfolio_no}
+
+
+</delete>
+</mapper>
