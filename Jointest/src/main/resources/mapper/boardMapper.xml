@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.join.test.dao.BoardMapper">
+
+<select id="boardSelectAll" resultType="board">
+	select
+		b.board_no 
+		,u.user_id 
+		,b.board_title 
+		,to_char(b.board_indate,'yy-mm-dd') as board_indate
+		,b.board_hits 
+		,b.board_content 
+		,b.board_original as board_original
+		,b.board_saved as board_saved
+	from
+		board_tb2 B, user_tb U
+	where
+		b.user_id = u.user_id
+	order by
+		board_no desc
+		
+
+
+</select>
+
+</mapper>

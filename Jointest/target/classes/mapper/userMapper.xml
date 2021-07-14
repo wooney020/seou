@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.join.test.dao.UserMapper">
+
+<insert id="userInsert" parameterType="user">
+
+	insert into user_tb(
+		user_no
+		,user_id
+		,user_pw
+		,user_nm	
+	)values(
+		user_seq.nextVal
+		,#{user_id}
+		,#{user_nm}
+		,#{user_pw}
+	)
+
+</insert>
+
+<select id="userSelectOne" parameterType="String" resultType="user">
+
+	select
+		user_no
+		,user_id
+		,user_pw
+		,user_nm
+		,user_indate
+	from
+		user_tb
+	where
+		user_id = #{user_id}
+
+</select>
+
+<select id="userSelectAll"  resultType="user">
+
+	select
+		user_no
+		,user_id
+		,user_pw
+		,user_nm
+		,to_char(user_indate,'yy-mm-dd') as user_indate
+	from
+		user_tb
+	order by
+		user_no desc
+
+</select>
+
+
+
+
+</mapper>
