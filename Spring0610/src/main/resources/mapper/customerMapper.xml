@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swdo.test.dao.BoardMapper">
+
+<insert id="boardInsert" parameterType="board">
+	insert into
+		board_tb(
+			board_no
+			,board_title
+			,customer_id
+			,board_content
+			<if test="board_original != null and board_saved != null">
+				,board_original
+				,board_saved
+			</if>
+		)values(
+			board_seq.nextval
+			,#{board_title}
+			,#{customer_id}
+			,#{board_content}
+			<if test="board_original != null and board_saved != null">
+				,#{board_original}
+				,#{board_saved}
+			</if>
+		
+		)
+
+</insert>
+
+<select id="boardSelectAll"  parameterType="String"   resultType ="hashmap">
+	select
+		b.board_no as board_no
+		,b.customer_id as customer_id
+		,c.customer_nm as customer_nm
+		,b.board_title as board_title
+		,b.board_hits as board_hits
+		,b.board_content as board_content
+		,to_char(b.board_indate,'yyyy-mm-dd') as board_indate
+	from
+		board_tb B , customer_tb C
+	where
+		b.customer_id = c.customer_id
+	<if test="_parameter != null">
+		and
+		upper(b.board_title) like '%'||upper(#{searchText})||'%'
+	</if>
+	order by
+		board_no desc
+
+</select>
+
+<select id="boardSelectOne" parameterType="int" resultType="hashmap">
+	select
+		b.board_no as board_no
+		,b.customer_id as customer_id
+		,c.customer_nm as customer_nm
+		,b.board_title as board_title
+		,b.board_hits as board_hits
+		,b.board_content as board_content
+		,to_char(b.board_indate,'yyyy-mm-dd') as board_indate
+		,b.board_original as board_original
+		,b.board_saved as board_saved
+	from
+		board_tb B , customer_tb C
+	where
+		b.board_no = #{board_no}
+		and
+		b.customer_id = c.customer_id
+
+</select>
+
+<update id="boardUpdateHits" parameterType="int">
+	update
+		board_tb
+	set
+		board_hits = board_hits + 1
+	where 
+		board_no = #{board_no}
+
+</update>
+
+<delete id = "boardDelete" parameterType="board">
+	delete
+	from 
+		board_tb
+	where
+		board_no = #{board_no}
+		and
+		customer_id = #{customer_id}
+	
+</delete>
+
+<update id="boardUpdate" parameterType="board">
+	update 
+		board_tb
+	set
+		board_title = #{board_title}
+		,board_content = #{board_content}
+		<if test="board_original != null and board_saved != null">
+			,board_original = #{board_original}
+			,board_saved = #{board_saved}
+		</if>
+	where
+		board_no = #{board_no}
+		and
+		customer_id=#{customer_id}
+
+
+</update>
+
+<select id ="boardTotalRecord" parameterType="String" resultType="int">
+	select
+		count(*)
+	from
+		board_tb
+	<if test="_parameter != null">
+	where
+		upper(board_title) like '%'||upper(#{searchText})||'%'
+	</if>
+
+</select>
+
+<insert id="replyInsert" parameterType = "reply">
+	insert into 
+		reply_tb(
+			reply_no
+			,customer_id
+			,reply_context
+			,board_no
+		)values(
+			reply_seq.nextVal
+			,#{customer_id}
+			,#{reply_context}
+			,#{board_no}
+		
+		)
+
+
+</insert>
+
+<select id ="replySelectList" parameterType="int" resultType="reply">
+	select
+		reply_no
+		,customer_id
+		,reply_context
+		,to_char(reply_indate,'yy-mm-dd') as reply_indate
+		,board_no
+	from
+		reply_tb
+	where
+		board_no =#{board_no}
+	order by
+		reply_no desc
+
+</select >
+<delete id="replyDelete" parameterType="reply">
+	delete from
+		reply_tb
+	where
+		reply_no = #{reply_no}
+		and
+		board_no = #{board_no}
+</delete>
+<update id="replyUpdate" parameterType="reply">
+	update 
+		reply_tb
+	set
+		reply_context = #{reply_context}
+	where
+		reply_no = #{reply_no}
+		and
+		board_no = #{board_no}
+
+</update>
+</mapper>
