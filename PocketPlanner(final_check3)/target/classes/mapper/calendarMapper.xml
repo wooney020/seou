@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swdo.test.dao.CalendarMapper">
+
+<!-- 일정 추가 -->
+<insert id="planInsert" parameterType="plan" >
+	
+	insert into 
+		pocket_plan(
+			plan_num,
+			user_id,
+			plan_title,
+			plan_sdate,
+			plan_edate,
+			plan_content,
+			plan_achv,
+			plan_allDay
+		)values(
+			pocket_plan_seq.nextval,
+			#{user_id},
+			#{plan_title},
+			#{plan_sdate},
+			#{plan_edate},
+			#{plan_content, jdbcType=VARCHAR},
+			#{plan_achv},
+			#{plan_allDay}
+			)
+</insert>
+
+<!-- 특정 사용자의 일정 전부 조회-->
+<select id="planSelectAll" parameterType = "String" resultType="plan">
+
+select
+	plan_num,
+	user_id,
+	plan_title,
+	plan_achv,
+	plan_content,
+	plan_sdate,
+	plan_edate,
+	plan_allDay,
+	plan_color
+from
+pocket_plan
+where
+	user_id = #{user_id}
+order by
+	plan_num
+
+
+</select>
+
+<!-- 특정 사용자 일정 전부 삭제 -->
+<delete id="planDeleteAll" parameterType="String">
+
+delete
+	from 
+		pocket_plan
+	where
+		user_id = #{user_id}
+
+
+</delete>
+
+<!-- 특정 사용자의 오늘의 일정 조회-->
+<select id="selectToDoList" parameterType = "String" resultType="plan">
+
+select
+	plan_num,
+	user_id,
+	plan_title,
+	plan_achv,
+	plan_content,
+	plan_sdate,
+	plan_edate,
+	plan_allDay
+from
+pocket_plan
+where
+	user_id = #{user_id}
+	and
+    (to_char(sysdate,'yyyy-mm-dd')
+    between TO_CHAR(TO_DATE(substr(plan_sdate,1,10), 'YYYY-MM-DD') + INTERVAL '1' DAY, 'YYYY-MM-DD') and substr(plan_edate, 1, 10)
+    or
+    TO_CHAR(TO_DATE(substr(plan_sdate,1,10), 'YYYY-MM-DD') + INTERVAL '1' DAY, 'YYYY-MM-DD') like to_char(sysdate,'yyyy-mm-dd%')
+    or
+    plan_edate like to_char(sysdate,'yyyy-mm-dd%'))
+
+order by plan_num
+
+
+</select>
+
+<!-- 특정 일정 완료여부 수정   --> 
+<update id="updateAchv" parameterType = "plan" >
+
+update 
+		pocket_plan
+	set
+		plan_achv = #{plan_achv}
+	where
+		user_id = #{user_id}
+		and
+		plan_num = #{plan_num}
+	
+
+</update> 
+
+<!-- 특정 사용자의 일주일간 일정 조회-->
+<!-- <select id="selectPlanWeek" parameterType = "String" resultType="plan">
+
+select
+	plan_num,
+	user_id,
+	plan_title,
+	plan_achv,
+	plan_content,
+	plan_sdate,
+	plan_edate,
+	plan_allDay
+from
+pocket_plan
+where
+	user_id = #{user_id}
+	and
+    substr(plan_sdate,1,10) 
+    between  
+    sysdate - (to_number(to_char(sysdate,'d'))+6)
+    and
+    sysdate - (to_number(to_char(sysdate,'d'))-1)
+order by plan_sdate
+ 
+
+</select>-->
+</mapper>

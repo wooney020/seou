@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<typeAliases>
+		<typeAlias type="com.swdo.test.vo.UserVO" alias="user"/>
+		<typeAlias type="com.swdo.test.vo.TimerVO" alias="timer"/>
+		<typeAlias type="com.swdo.test.vo.PlanVO" alias="plan"/>
+		<typeAlias type="com.swdo.test.vo.StatisticVO" alias="statistic"/>
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mapper/userMapper.xml"/>
+		<mapper resource="mapper/timerMapper.xml"/>
+		<mapper resource="mapper/calendarMapper.xml"/>
+		<mapper resource="mapper/statisticMapper.xml"/>
+		
+		
+	</mappers>
+
+
+</configuration>

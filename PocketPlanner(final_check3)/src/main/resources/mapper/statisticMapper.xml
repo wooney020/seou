@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swdo.test.dao.StatisticMapper">
+
+<!-- 학습통계 데이터 추가 -->
+<insert id="statisticInsert" parameterType="statistic" >
+	
+	insert into 
+		pocket_statistic(
+			st_date,
+			user_id
+		)values(
+			#{st_date},
+			#{user_id}
+			)
+</insert>
+
+<!-- 학습통계 데이터 전체 삭제 -->
+<delete id="statisticDeleteAll" parameterType="String">
+
+delete
+	from 
+		pocket_statistic
+	where
+		user_id = #{user_id}
+
+</delete>
+
+<!-- 학습통계 성취도 추가   --> 
+<update id="statisticUpdate" parameterType = "statistic" >
+
+update 
+		pocket_statistic
+	set
+		st_statistic = #{st_statistic}
+	where
+		user_id = #{user_id}
+		and
+		st_date = #{st_date}
+	
+
+</update> 
+
+<!-- 특정 사용자의 학습통계 데이터 조회 -->
+<select id="statisticSelectOne" parameterType = "statistic" resultType="statistic">
+
+select 
+	st_date,
+	user_id,
+	st_statistic
+from 
+	pocket_statistic
+where
+	user_id = #{user_id}
+
+
+
+</select>
+
+
+<!-- 특정 사용자의 지난 주 학습통계 데이터 불러오기  -->
+<!-- <select id="selectStatisticWeek" parameterType="String" resultType="statistic">
+select
+	st_date,
+	user_id,
+	st_statistic
+from
+pocket_statistic
+where
+	user_id = #{user_id}
+	and
+    st_date
+    between  
+    sysdate - (to_number(to_char(sysdate,'d'))+6)
+    and
+    sysdate - (to_number(to_char(sysdate,'d'))-1)
+order by st_date
+</select> -->
+
+<!-- 학습통계 그래프용 지난 주 데이터 불러오기  -->
+<select id="selectStatisticGraph" parameterType="String" resultType="statistic">
+select
+	distinct ps.st_date,
+	ps.user_id,
+    round(pc.endcount / pc.planall * 100, 0) as st_statistic
+from
+pocket_statistic ps,
+    (select distinct pa.plan_sdate, pa.planAll, pe.endCount
+from (select to_date(substr(plan_sdate, 0, 10)) as plan_sdate, count(*) as planAll
+from pocket_plan
+group by plan_sdate
+order by 1) pa, (select to_date(substr(plan_sdate, 0, 10)) as plan_sdate, count(*) as endCount
+from pocket_plan
+where plan_achv = 1
+group by plan_sdate
+order by 1) pe
+where pa.plan_sdate = pe.plan_sdate(+)
+order by 1) pc
+where
+	ps.user_id = #{user_id}
+	and
+    ps.st_date
+    between  
+    sysdate - (to_number(to_char(sysdate,'d'))+6)
+    and
+    sysdate - (to_number(to_char(sysdate,'d'))-1)
+    and
+    ps.st_date = pc.plan_sdate(+)
+order by ps.st_date
+
+</select>
+
+</mapper>
