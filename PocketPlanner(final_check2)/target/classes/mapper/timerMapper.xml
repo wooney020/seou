@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swdo.test.dao.TimerMapper">
+
+<!-- 처음 사용한 타이머 데이터 insert -->
+<insert id="timerInsert" parameterType="timer" >
+
+
+	insert into pocket_timer(
+		user_id
+		)values(
+		#{user_id}
+		)
+	
+
+</insert>
+
+<!-- 타이머 데이터 update  -->
+<update id="timerUpdate" parameterType="timer">
+
+	update 
+		pocket_timer
+	set
+		timer_total = #{timer_total}
+		,timer_today = #{timer_today}
+		,timer_indate = to_date(sysdate,'yy/mm/dd')
+	where
+		user_id = #{user_id}
+		
+</update>
+
+<!-- timer_today 리셋  -->
+<update id="todayReset" parameterType="timer" >
+
+	update 
+		pocket_timer
+	set
+		timer_today = 0
+		,timer_indate = to_date(sysdate,'yy/mm/dd')
+	where
+		user_id = #{user_id}
+		
+</update>
+
+<!-- timer 리셋  -->
+<update id="timerReset" parameterType="timer" >
+
+	update 
+		pocket_timer
+	set
+		timer_total = 0
+		,timer_today = 0
+		,timer_indate = to_date(sysdate,'yy/mm/dd')
+	where
+		user_id = #{user_id}
+		
+</update>
+
+<!-- 특정 사용자의 타이머 데이터 불러오기 -->
+<select id="timerSelect" parameterType="String" resultType="timer">
+
+select 
+	timer_total,
+	timer_today,
+	user_id,
+	to_char(timer_indate,'yy/mm/dd') as timer_indate
+from
+	pocket_timer
+where
+	user_id = #{user_id}
+
+</select>
+
+
+
+</mapper>
