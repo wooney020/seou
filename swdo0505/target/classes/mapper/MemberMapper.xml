@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.swdo.test.dao.MemberMapper">
+<!-- 회원가입/ 데이터 삽입 -->
+<insert id="memberInsert" parameterType="member">
+	insert into
+		blog_member(
+			id
+			,password
+			,name
+			,photo
+		)values(
+			#{id}
+			,#{password}
+			,#{name}
+			,#{photo}
+		)
+</insert>
+
+<!-- 로그인 기능 -->
+<select id="memberLogin" parameterType="String" resultType="member">
+	select
+		id
+		,password
+		,name
+		,photo
+	from
+		blog_member
+	where
+		id=#{id}
+
+</select>
+
+<!-- 회원 조회 -->
+<!-- 값이 여러개라서 return값은 ArrayList -->
+<select id="memberSelect" resultType="member">
+	select 
+		id
+		,name
+		,photo
+	from
+		blog_member
+	order by 
+		id asc
+</select>
+
+
+</mapper>
